@@ -1,12 +1,8 @@
 ------------------------------------------------------------------------
 # graphx-scala
 ------------------------------------------------------------------------
-Compute graphs using Apache GraphX.
 
-------------------------------------------------------------------------
 This activator project describes a graphX functions
-```
------------------------------------------------------------------------
 Building Application Apache GraphX with Scala
 
 This is use to process graph using GraphX. It demonstrates:
