@@ -1,3 +1,9 @@
+------------------------------------------------------------------------
+# graphx-scala
+------------------------------------------------------------------------
+Compute graphs using Apache GraphX.
+
+------------------------------------------------------------------------
 This activator project describes a graphX functions
 ```
 -----------------------------------------------------------------------
@@ -30,3 +36,5 @@ libraryDependencies += "org.apache.spark" %% "spark-graphx" % "1.6.0"
 ### References
 -----------------------------------------------------------------------
 * [GraphX](http://spark.apache.org/docs/1.6.0/graphx-programming-guide.html)
+
+
