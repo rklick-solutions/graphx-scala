@@ -1,6 +1,7 @@
 package com.rklick.graphx.context
 
 import com.rklick.graphx.domain.GraphComponent
+import org.apache.spark.graphx.lib.{StronglyConnectedComponents, ConnectedComponents, PageRank}
 import org.apache.spark.graphx.{Edge, Graph, PartitionStrategy}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{DataFrame, Row}
@@ -73,7 +74,9 @@ trait GraphXProcess {
   def applyGraphAlgorithm(graph: Graph[String, String], primaryIndex: String): Either[String, GraphRDD] = {
     try {
       //Page rank Algorithm
-      val pageRankGraph = graph.pageRank(0.001).cache()
+      //val pageRankStart = System.currentTimeMillis()
+      val pageRankGraph = PageRank.run(graph, 1, 0.001)
+      //println(s"End Page Rank GraphX at :::::${System.currentTimeMillis() - pageRankStart}") */
       // Page Rank join with graph object
       val graphWithPageRank = graph.outerJoinVertices(pageRankGraph.vertices) {
         case (id, attr, Some(pr)) => (pr, attr)
@@ -81,8 +84,10 @@ trait GraphXProcess {
       }
 
       //Triangle Count Algorithm
+      //val triangleStart = System.currentTimeMillis()
       val triangleComponent = graph.partitionBy(PartitionStrategy.RandomVertexCut)
         .triangleCount().vertices
+      //println(s"End triangleComponent GraphX at :::::${System.currentTimeMillis() - triangleStart}") */
 
       //Triangle Count join with page rank graph object
       val triByGraph = graphWithPageRank.outerJoinVertices(triangleComponent) {
@@ -91,7 +96,9 @@ trait GraphXProcess {
       }
 
       //Connected Component Algorithm
-      val cComponent = graph.connectedComponents().vertices
+      //val connectedStart = System.currentTimeMillis()
+      val cComponent = ConnectedComponents.run(graph).vertices
+      //println(s"End cComponent GraphX at :::::${System.currentTimeMillis() - connectedStart}")
       //Connected Component join with triangle component graph object
       val ccByGraph = triByGraph.outerJoinVertices(cComponent) {
         case (id, (rank, tri, attr), Some(cc)) => (rank, tri, cc, attr)
@@ -99,8 +106,7 @@ trait GraphXProcess {
       }
 
       //Strongly Connected Component Algorithm
-      val stronglyConnected = graph.stronglyConnectedComponents(3).vertices
-
+      val stronglyConnected = StronglyConnectedComponents.run(graph, 3).vertices
       //Strongly Connected Component join with connected component object
       val stByGraph = ccByGraph.outerJoinVertices(stronglyConnected) {
         case (id, (rank, tri, cc, attr), Some(st)) => (rank, tri, cc, st, attr)
