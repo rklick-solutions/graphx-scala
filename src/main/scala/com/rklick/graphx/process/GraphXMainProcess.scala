@@ -12,7 +12,7 @@ import scala.util.{Left, Right}
   */
 object GraphXMainProcess extends GraphXProcess {
 
-  val sqlContext = SparkCommon.sparkSqlContext
+  val sqlContext = SparkCommon.sqlContext
 
   /**
     *
@@ -24,9 +24,9 @@ object GraphXMainProcess extends GraphXProcess {
     val df = sqlContext.read.format("csv").options(SCHEMA_OPTIONS).load(path)
     val graphComponent = GraphComponent("ID", "User", "Relationship", "RelationId")
     processGraph(df, graphComponent) match {
-      case Right(data) => logger.info(s"GraphX process successfully completed.")
+      case Right(data) => println(s"GraphX process successfully completed.")
         sqlContext.sparkContext.stop()
-      case Left(error) => logger.error(s"Error during graphX:::${error}")
+      case Left(error) => println(s"Error during graphX:::${error}")
         sqlContext.sparkContext.stop()
     }
   }

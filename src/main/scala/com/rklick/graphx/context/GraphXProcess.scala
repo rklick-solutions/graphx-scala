@@ -19,6 +19,7 @@ trait GraphXProcess {
 
 
   /**
+    * Create edges from dataframe
     *
     * @param df
     * @param graph
@@ -35,6 +36,7 @@ trait GraphXProcess {
   }
 
   /**
+    * Create vertices from dataframe
     *
     * @param df    The DataFrame
     * @param graph The domain.GraphComponent
@@ -48,6 +50,7 @@ trait GraphXProcess {
   }
 
   /**
+    * Process graph
     *
     * @param df             The DataFrame
     * @param graphComponent The domain.GraphComponent
@@ -67,6 +70,7 @@ trait GraphXProcess {
   }
 
   /**
+    * Apply graph algorithm & find the output
     *
     * @param graph
     * @param primaryIndex
@@ -75,9 +79,7 @@ trait GraphXProcess {
   def applyGraphAlgorithm(graph: Graph[String, String], primaryIndex: String): Either[String, GraphRDD] = {
     try {
       //Page rank Algorithm
-      //val pageRankStart = System.currentTimeMillis()
       val pageRankGraph = PageRank.run(graph, 1, 0.001)
-      //println(s"End Page Rank GraphX at :::::${System.currentTimeMillis() - pageRankStart}") */
       // Page Rank join with graph object
       val graphWithPageRank = graph.outerJoinVertices(pageRankGraph.vertices) {
         case (id, attr, Some(pr)) => (pr, attr)
@@ -85,10 +87,8 @@ trait GraphXProcess {
       }
 
       //Triangle Count Algorithm
-      //val triangleStart = System.currentTimeMillis()
       val triangleComponent = graph.partitionBy(PartitionStrategy.RandomVertexCut)
         .triangleCount().vertices
-      //println(s"End triangleComponent GraphX at :::::${System.currentTimeMillis() - triangleStart}") */
 
       //Triangle Count join with page rank graph object
       val triByGraph = graphWithPageRank.outerJoinVertices(triangleComponent) {
@@ -97,9 +97,7 @@ trait GraphXProcess {
       }
 
       //Connected Component Algorithm
-      //val connectedStart = System.currentTimeMillis()
       val cComponent = ConnectedComponents.run(graph).vertices
-      //println(s"End cComponent GraphX at :::::${System.currentTimeMillis() - connectedStart}")
       //Connected Component join with triangle component graph object
       val ccByGraph = triByGraph.outerJoinVertices(cComponent) {
         case (id, (rank, tri, attr), Some(cc)) => (rank, tri, cc, attr)

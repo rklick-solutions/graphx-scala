@@ -15,6 +15,6 @@ object SparkCommon {
   }
 
   lazy val sparkContext = new SparkContext(conf)
-  lazy val sparkSqlContext = SQLContext.getOrCreate(sparkContext)
+  lazy val sqlContext = SQLContext.getOrCreate(sparkContext)
 
 }
