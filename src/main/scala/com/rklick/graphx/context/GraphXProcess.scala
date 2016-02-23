@@ -1,11 +1,12 @@
 package com.rklick.graphx.context
 
 import com.rklick.graphx.domain.GraphComponent
-import org.apache.spark.graphx.lib.{StronglyConnectedComponents, ConnectedComponents, PageRank}
+import org.apache.spark.graphx.lib.{ConnectedComponents, PageRank, StronglyConnectedComponents}
 import org.apache.spark.graphx.{Edge, Graph, PartitionStrategy}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{DataFrame, Row}
-import org.slf4j.{LoggerFactory, Logger}
+import org.slf4j.{Logger, LoggerFactory}
+
 import scala.util.control.NonFatal
 
 /**
@@ -48,7 +49,7 @@ trait GraphXProcess {
 
   /**
     *
-    * @param df  The DataFrame
+    * @param df             The DataFrame
     * @param graphComponent The domain.GraphComponent
     */
   def processGraph(df: DataFrame, graphComponent: GraphComponent): Either[String, GraphRDD] = {

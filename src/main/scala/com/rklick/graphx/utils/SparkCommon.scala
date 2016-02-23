@@ -1,7 +1,6 @@
 package com.rklick.graphx.utils
 
 import org.apache.spark.sql.SQLContext
-import org.apache.spark.streaming.{Seconds, StreamingContext}
 import org.apache.spark.{SparkConf, SparkContext}
 
 /**
@@ -17,7 +16,5 @@ object SparkCommon {
 
   lazy val sparkContext = new SparkContext(conf)
   lazy val sparkSqlContext = SQLContext.getOrCreate(sparkContext)
-  lazy val streamingContext = StreamingContext.getActive()
-    .getOrElse(new StreamingContext(sparkContext, Seconds(2)))
 
 }
